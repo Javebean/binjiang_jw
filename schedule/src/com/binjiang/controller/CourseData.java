@@ -1,6 +1,7 @@
 package com.binjiang.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
@@ -21,6 +22,8 @@ public class CourseData {
 	
 	@RequestMapping(value="/loginbjxy.do",method=RequestMethod.POST,produces="text/html;charset=utf-8")
 	public String LoginBJXY(String username,String password,String role){
+		//init httpclient
+		new CallRemote();
 		JSONObject obj = new JSONObject();
 		try {
 			bjxyuri = CallRemote.getRedirectUrl();
@@ -38,9 +41,9 @@ public class CourseData {
 			
 			//返回数据 
 			JSONObject dataInfo = new JSONObject();
-			dataInfo.put("STU_INFO", parseUserInfo);//学生基本信息
-			dataInfo.put("StudentJZ1$DropDownListXY", htmlUtil.parseDocument(outResultString));
-			dataInfo.put("DEFAULT_KB", htmlUtil.parseClassCourse(outResultString));
+			dataInfo.put("stu_info", parseUserInfo);//学生基本信息
+			dataInfo.put("stu_departments", htmlUtil.parseDocument(outResultString));
+			dataInfo.put("default_kb", htmlUtil.parseClassCourse(outResultString));
 			
 			obj.put("status", "ok");
 			obj.put("data", dataInfo);
@@ -57,7 +60,8 @@ public class CourseData {
 	}
 	
 	
-	@RequestMapping(value="/get_stu_profession.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
+	/*点击系部*/
+	@RequestMapping(value="/click_stu_departments.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
 	public String getStu_Profession(String docId){
 		JSONObject result = new JSONObject();
 		try{
@@ -78,7 +82,8 @@ public class CourseData {
 		}
 	}
 	
-	@RequestMapping(value="/get_stu_grade.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
+	/*点击专业*/
+	@RequestMapping(value="/click_stu_profession.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
 	public String getStu_Grade(String profession_value){
 		JSONObject result = new JSONObject();
 		try{
@@ -100,7 +105,8 @@ public class CourseData {
 		}
 	}
 	
-	@RequestMapping(value="/get_stu_class.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
+	/*点击年级*/
+	@RequestMapping(value="/click_stu_grade.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
 	public String getStu__Class(String grade_value){
 		JSONObject result = new JSONObject();
 		try{
@@ -120,13 +126,12 @@ public class CourseData {
 		}
 	}
 	
-	
-	@RequestMapping(value="/select_class_course.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
+	/*获得课表*/
+	@RequestMapping(value="/get_class_course.do",method=RequestMethod.POST, produces="text/html;charset=utf-8")
 	public String getClassCourse(String docName,String processName,
 			String grade,String className,String school_year,String semester){
 			JSONObject result = new JSONObject();
 		try{
-			className = new String(className.getBytes("iso8859-1"),"utf-8");
 			Map<String, String> param = htmlUtil.getSelectCourseMustParam(outResultString);
 			param.put("StudentJZ1$DropDownListXY", docName);
 			param.put("StudentJZ1$DropDownListZYMC", processName);
@@ -148,6 +153,17 @@ public class CourseData {
 			result.put("status", "fail");
 			return result.toString();
 		}
+	}
+	
+	
+	@RequestMapping(value="/quit_system.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public  String  quitSystem(){ 
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("action", "quit");
+		String result = CallRemote.httpGetFunc(bjxyuri+"default.aspx", map);
+
+		return result;
+		
 	}
 	
 }
