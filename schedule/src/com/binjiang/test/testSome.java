@@ -33,7 +33,7 @@ public class testSome {
 	@Test
 	public void test2getStu_pro(){
 		Map<String,String> param = new HashMap<String, String>();
-		param.put("docId", "52");
+		param.put("doc_value", "52");
 		String httpPostFunc = CallRemote.httpGetFunc(baseUrl+"click_stu_departments.do", param);
 		System.out.println("点击系部："+httpPostFunc);
 		
@@ -57,10 +57,10 @@ public class testSome {
 	@Test
 	public void test5SelectCourse(){
 		Map<String,String> param = new HashMap<String, String>();
-		param.put("docName","52");
-		param.put("processName","2344");
-		param.put("grade","2012");
-		param.put("className","12软件3");
+		param.put("doc_value","52");
+		param.put("profession_value","2344");
+		param.put("grade_value","2012");
+		param.put("class_value","12软件1");
 		param.put("school_year","2013-2014");
 		param.put("semester","1");
 		String httpGetFunc = CallRemote.httpPostFunc(baseUrl+"get_class_course.do", param);

@@ -145,4 +145,14 @@ public class htmlUtil {
 		return result;
 	}
 	
+	public static boolean isHomePage(String html){
+		Document parse = Jsoup.parse(html);
+		Element e = parse.getElementById("TextBox1");
+		if(e!=null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 }

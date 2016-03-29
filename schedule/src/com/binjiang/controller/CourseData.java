@@ -62,12 +62,12 @@ public class CourseData {
 	
 	/*点击系部*/
 	@RequestMapping(value="/click_stu_departments.do",method=RequestMethod.GET, produces="text/html;charset=utf-8")
-	public String getStu_Profession(String docId){
+	public String getStu_Profession(String doc_value){
 		JSONObject result = new JSONObject();
 		try{
 			Map<String, String> param = htmlUtil.getSelectCourseMustParam(outResultString);
 			param.put("__EVENTTARGET", "StudentJZ1$DropDownListXY");
-			param.put("StudentJZ1$DropDownListXY", docId);
+			param.put("StudentJZ1$DropDownListXY", doc_value);
 			param.put("__EVENTARGUMENT", "");
 			param.put("__LASTFOCUS", "");
 			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/kebiaoall.aspx", param);
@@ -128,15 +128,15 @@ public class CourseData {
 	
 	/*获得课表*/
 	@RequestMapping(value="/get_class_course.do",method=RequestMethod.POST, produces="text/html;charset=utf-8")
-	public String getClassCourse(String docName,String processName,
-			String grade,String className,String school_year,String semester){
+	public String getClassCourse(String doc_value,String profession_value,
+			String grade_value,String class_value,String school_year,String semester){
 			JSONObject result = new JSONObject();
 		try{
 			Map<String, String> param = htmlUtil.getSelectCourseMustParam(outResultString);
-			param.put("StudentJZ1$DropDownListXY", docName);
-			param.put("StudentJZ1$DropDownListZYMC", processName);
-			param.put("StudentJZ1$DropDownListDQSZJ", grade);
-			param.put("StudentJZ1$DropDownListXZB", className);
+			param.put("StudentJZ1$DropDownListXY", doc_value);
+			param.put("StudentJZ1$DropDownListZYMC", profession_value);
+			param.put("StudentJZ1$DropDownListDQSZJ", grade_value);
+			param.put("StudentJZ1$DropDownListXZB", class_value);
 			param.put("XN1$DropDownListXN", school_year);
 			param.put("XQ1$DropDownListXQ", semester);
 			param.put("__EVENTARGUMENT", "");
@@ -158,11 +158,22 @@ public class CourseData {
 	
 	@RequestMapping(value="/quit_system.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
 	public  String  quitSystem(){ 
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("action", "quit");
-		String result = CallRemote.httpGetFunc(bjxyuri+"default.aspx", map);
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("action", "quit");
+			String result1 = CallRemote.httpGetFunc(bjxyuri+"default.aspx", map);
+			boolean homePage = htmlUtil.isHomePage(result1);
+			if(homePage){
+				result.put("status", "ok");
+			}else{
+				result.put("status", "fail");
+			}
+		}catch(Exception e){
+			result.put("status", "fail");
+		}
 
-		return result;
+		return result.toString();
 		
 	}
 	
