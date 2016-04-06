@@ -156,6 +156,44 @@ public class CourseData {
 	}
 	
 	
+	/**
+	 * @param lev : 0是普通课程成绩     1是等级考试成绩
+	 * @return
+	 */
+	@RequestMapping(value="/get_stu_score.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String get_stu_score(int lev){
+		String scorestr = null;
+		JSONArray scoreArr = null;
+		if(0==lev){
+			scorestr = CallRemote.httpGetFunc(bjxyuri+"student/chengji.aspx", null);
+			scoreArr = htmlUtil.parseOrdinaryLevScore(scorestr);
+		}else if(1==lev){
+			scorestr = CallRemote.httpGetFunc(bjxyuri+"student/djkscjcx.aspx", null);
+			scoreArr = htmlUtil.parseOrdinaryLevScore(scorestr);
+		}
+		return scoreArr.toString();
+	}
+	
+	
+	
+	/**
+	 * @param lev 0是网上平叫    1是学生自评
+	 * @return
+	 */
+	@RequestMapping(value="/online_evaluate.do",produces="text/html;charset=utf-8",method=RequestMethod.GET)
+	public String online_evaluate(int lev){
+		String evaStr = null;
+		if(lev==0){
+			evaStr = CallRemote.httpGetFunc(bjxyuri+"student/wspj.aspx", null);
+		}else if(1==lev){
+			
+		}
+		
+		
+		return evaStr;
+	}
+	
+	
 	@RequestMapping(value="/quit_system.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
 	public  String  quitSystem(){ 
 		JSONObject result = new JSONObject();

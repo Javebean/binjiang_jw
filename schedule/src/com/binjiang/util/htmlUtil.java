@@ -145,6 +145,10 @@ public class htmlUtil {
 		return result;
 	}
 	
+	/**
+	 * @param html
+	 * @return 是否回到主页
+	 */
 	public static boolean isHomePage(String html){
 		Document parse = Jsoup.parse(html);
 		Element e = parse.getElementById("TextBox1");
@@ -154,5 +158,43 @@ public class htmlUtil {
 			return false;
 		}
 	}
+	
+	
+	
+	/**
+	 * @return 解析学生普通成绩& 等级考试成绩
+	 */
+	public static JSONArray parseOrdinaryLevScore(String html){
+		JSONArray arr = new JSONArray();
+		Document doc = Jsoup.parse(html);
+		Element table = doc.getElementById("GridView1");
+		Elements trs = table.select("tr");
+		int tr_num = trs.size();
+		String[] th = new String[trs.get(0).select("th").size()];
+		Elements ths = null;
+		JSONObject obj = null;
+		
+		for(int i=0;i<tr_num;i++){
+			if(i==0){//把第一个tr中的th存到数组里
+				ths = trs.get(i).select("th");
+				int index = 0;
+				for(Element t : ths){
+					th[index++] = t.text();
+				}
+			}else{
+				ths = trs.get(i).select("td");
+				int index = 0;
+				obj = new JSONObject();
+				for(Element t : ths){
+					obj.put(th[index++], t.text());
+				}
+				arr.put(obj);
+			}
+			
+		}
+		
+		return arr;
+	}
+	
 	
 }

@@ -67,6 +67,23 @@ public class testSome {
 		System.out.println(httpGetFunc);
 		
 	}
+	@Test
+	public void test6SelectScore(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("lev","0");
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"get_stu_score.do", param);
+		System.out.println(httpGetFunc);
+		
+	}
+	
+	@Test
+	public void test7Online_eva(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("lev","0");
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"online_evaluate.do", param);
+		System.out.println(httpGetFunc);
+		
+	}
 	
 	@Test
 	public void testQuitSystem(){
