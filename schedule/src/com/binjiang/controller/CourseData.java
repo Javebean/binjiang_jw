@@ -177,21 +177,44 @@ public class CourseData {
 	
 	
 	/**
-	 * @param lev 0是网上平叫    1是学生自评
+	 * @param lev 0是网上平叫    1是学生自评 其实是打开评教的表格
 	 * @return
 	 */
-	@RequestMapping(value="/online_evaluate.do",produces="text/html;charset=utf-8",method=RequestMethod.GET)
-	public String online_evaluate(int lev){
+	@RequestMapping(value="/online_evaluate_page.do",produces="text/html;charset=utf-8",method=RequestMethod.GET)
+	public String online_evaluate_page(int lev){
 		String evaStr = null;
+		JSONArray parserOnlineEvalute = null;
 		if(lev==0){
 			evaStr = CallRemote.httpGetFunc(bjxyuri+"student/wspj.aspx", null);
+			parserOnlineEvalute = htmlUtil.parserOnlineEvalute(evaStr);
 		}else if(1==lev){
 			
 		}
 		
 		
-		return evaStr;
+		return parserOnlineEvalute.toString();
 	}
+	
+	
+	@RequestMapping(value="/online_evaluate.do",produces="text/html;charset=utf-8",method=RequestMethod.GET)
+	public String online_evaluate(String param){
+		if(param==null){
+			JSONObject obj = new JSONObject();
+			obj.put("status", "fail");
+			obj.put("reason", "没有参数");
+			return  obj.toString();
+		}
+		String result = null;
+		JSONArray arr = null;
+		try{
+			result = CallRemote.httpGetFunc(bjxyuri+"student/"+param, null);
+			arr = htmlUtil.parseSingleOnlineEv(result);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return arr.toString();
+	}
+	
 	
 	
 	@RequestMapping(value="/quit_system.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")

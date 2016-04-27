@@ -11,17 +11,18 @@ import com.binjiang.http.CallRemote;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class testSome {
 
-	private String baseUrl = "http://localhost:8081/schedule/";
+	private String baseUrl = "http://localhost:8080/schedule/";
 	
 	CallRemote call = new CallRemote();
 	@Test
 	public void test1Load(){
 		Map<String,String> param = new HashMap<String, String>();
-		param.put("username", "20122344003");
-		param.put("password", "888888");
-		/*		param.put("username", "20132308020");
+		/*param.put("username", "20122344003");
+		param.put("password", "888888");*/
+		param.put("username", "20132308020");
 		param.put("password", "001221");
-		 */		param.put("role", "RadioButton3");
+		 		
+		param.put("role", "RadioButton3");
 		 String httpPostFunc = CallRemote.httpPostFunc(baseUrl+"loginbjxy.do", param);
 		 System.out.println("登陆成功："+httpPostFunc);
 		 
@@ -77,11 +78,19 @@ public class testSome {
 	}
 	
 	@Test
-	public void test7Online_eva(){
+	public void test7Online_eva_page(){
 		Map<String,String> param = new HashMap<String, String>();
 		param.put("lev","0");
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"online_evaluate_page.do", param);
+		System.out.println("网上评教page"+httpGetFunc);
+		
+	}
+	@Test
+	public void test8Online_eva(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("param","wspjdf.aspx?xkkh=(2015-2016-2)-1000018-002200-1&jszgh=002200&pjmc=期中");
 		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"online_evaluate.do", param);
-		System.out.println(httpGetFunc);
+		System.out.println("网上评教33"+httpGetFunc);
 		
 	}
 	
@@ -90,5 +99,6 @@ public class testSome {
 		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"quit_system.do", null);
 		System.out.println(httpGetFunc);
 	}
+	
 
 }

@@ -1,5 +1,6 @@
 package com.binjiang.util;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -196,5 +197,109 @@ public class htmlUtil {
 		return arr;
 	}
 	
+	
+	//网上评教。两个表格
+	public static JSONArray parserOnlineEvalute(String html){
+		JSONArray arr = new JSONArray();//放两个表格
+		JSONObject obj1 = new JSONObject();
+		JSONArray parseonline1 = parseonline1(html,"GridView1");
+		obj1.put("普通课程评教", parseonline1);
+		
+		JSONObject obj2 = new JSONObject();
+		JSONArray parseonline2 = parseonline1(html,"GridView2");
+		obj2.put("普通课程评教", parseonline2);
+		
+		arr.put(obj1);
+		arr.put(obj2);
+		return arr;
+	}
+	
+	public static JSONArray parseonline1(String html,String tableId){
+		JSONArray arr = new JSONArray();
+		Document doc = Jsoup.parse(html);
+		Element table = doc.getElementById(tableId);
+		Elements trs = table.select("tr");
+		int tr_num = trs.size();
+		String[] th = new String[trs.get(0).select("th").size()];
+		Elements ths = null;
+		JSONObject obj = null;
+		
+		for(int i=0;i<tr_num;i++){
+			if(i==0){//把第一个tr中的th存到数组里
+				ths = trs.get(i).select("th");
+				int index = 0;
+				for(Element t : ths){
+					th[index++] = t.text();
+				}
+			}else{
+				ths = trs.get(i).select("td");
+				int index = 0;
+				obj = new JSONObject();
+				for(Element t : ths){
+					if(index==4){
+						obj.put(th[index++],t.select("a").attr("href"));
+					}else{
+						obj.put(th[index++], t.text());
+					}
+				}
+				arr.put(obj);
+			}
+			
+		}
+		
+		return arr;
+	}
+	
+	
+	/**
+	 * 解析个人的评价表面
+	 * @return
+	 */
+	public static JSONArray parseSingleOnlineEv(String html){
+		
+		
+		String[] titleRate = {"","","优（10分）","良（8分）","中（6分）","差（0分）"};
+		JSONArray arr = new JSONArray();
+		Document doc = Jsoup.parse(html);
+		Element table = doc.getElementById("GridView1");
+		Elements trs = table.select("tr");
+		int tr_num = trs.size();
+		String[] th = new String[trs.get(0).select("th").size()];
+		Elements ths = null;
+		JSONObject obj = null;
+		
+		for(int i=0;i<tr_num;i++){
+			if(i==0){//把第一个tr中的th存到数组里
+				ths = trs.get(i).select("th");
+				int index = 0;
+				for(Element t : ths){
+					if(index>1){
+						th[index] = titleRate[index];
+					}else{
+						th[index] = t.text().trim();
+					}
+					index++;
+				}
+				System.out.println(Arrays.toString(th));
+			}else{
+				ths = trs.get(i).select("td");
+				int index = 0;
+				obj = new JSONObject();
+				for(Element t : ths){
+					if(index>1){
+						obj.put(th[index], t.select("input").attr("name")+","+t.select("input").val());
+					}else{
+						obj.put(th[index], t.text());
+					}
+					index++;
+				}
+				arr.put(obj);
+			}
+			
+		}
+		
+		return arr;
+		
+	}
 	
 }
