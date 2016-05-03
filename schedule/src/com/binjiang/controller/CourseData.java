@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HttpRequest;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -337,7 +338,7 @@ public class CourseData {
 		try{
 			outResultString = CallRemote.httpGetFunc(bjxyuri+"public/xsmddy.aspx", null);
 			result.put("status", "ok");
-			result.put("data", htmlUtil.parseXueYuan(outResultString));
+			result.put("data", htmlUtil.parseXueYuan(outResultString,"DropDownList4"));
 			return result.toString();
 			
 		}catch(Exception e){
@@ -347,6 +348,10 @@ public class CourseData {
 		
 	}
 	
+	/**
+	 * 点击 查看班级学生名册--点击系部
+	 * @return
+	 */
 	@RequestMapping(value="click_rollcall_document.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
 	public String click_rollcall_document(String document_value){
 		JSONObject result = new JSONObject();
@@ -354,21 +359,111 @@ public class CourseData {
 			Map<String, String> param = htmlUtil.getSelectCourseMustParam(outResultString);
 			param.put("__EVENTTARGET", "DropDownList4");
 			param.put("DropDownList4", document_value);
-			param.put("divepage$First","首页");
+			param.put("__EVENTARGUMENT", "");
+			param.put("__LASTFOCUS", "");
+			param.put("__VIEWSTATEENCRYPTED", "");
+			param.put("Button1", "查询");
+			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
+			JSONArray obj = htmlUtil.parseXueYuan(outResultString,"DropDownList5");
+			
+			result.put("status", "ok");
+			result.put("data", obj);
+			return result.toString();
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+			
+		}
+	}
+	/**
+	 * 点击 查看班级学生名册--点击专业
+	 * @return
+	 */
+	@RequestMapping(value="click_rollcall_profession.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String click_rollcall_profession(String profession_value){
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String> param = htmlUtil.getSelectCourseMustParam(outResultString);
+			param.put("__EVENTTARGET", "DropDownList5");
+			param.put("DropDownList5", profession_value);
+			param.put("__EVENTARGUMENT", "");
+			param.put("__LASTFOCUS", "");
+			param.put("__VIEWSTATEENCRYPTED", "");
+			param.put("Button1", "查询");
+			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
+			JSONArray obj = htmlUtil.parseXueYuan(outResultString, "DropDownList3");
+			
+			result.put("status", "ok");
+			result.put("data", obj);
+			return result.toString();
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+			
+		}
+	}
+	
+	/**
+	 * 点击 查看班级学生名册--点击年级
+	 * @return
+	 */
+	@RequestMapping(value="click_rollcall_grade.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String click_rollcall_grade(String grade_value){
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String> param = htmlUtil.getSelectCourseMustParam(outResultString);
+			param.put("__EVENTTARGET", "DropDownList3");
+			param.put("DropDownList3", grade_value);
+			param.put("__EVENTARGUMENT", "");
+			param.put("__LASTFOCUS", "");
+			param.put("__VIEWSTATEENCRYPTED", "");
+			param.put("Button1", "查询");
+			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
+			JSONArray obj = htmlUtil.parseXueYuan(outResultString, "DropDownList6");
+			
+			result.put("status", "ok");
+			result.put("data", obj);
+			return result.toString();
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+			
+		}
+	}
+	/**
+	 * 点击 查看班级学生名册 
+	 * @return
+	 */
+	@RequestMapping(value="class_rollcall_names.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String click_rollcall_class(HttpServletRequest request){
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String[]> pmap = request.getParameterMap();
+			Map<String,String> param = new HashMap<String, String>();
+			for(Map.Entry<String, String[]> p:pmap.entrySet()){
+				param.put(p.getKey(), p.getValue()[0]);
+			}
+			
+			
+			param.put("__EVENTARGUMENT", "");
+			param.put("__LASTFOCUS", "");
+			param.put("__VIEWSTATEENCRYPTED", "");
+			param.put("divepage$First", "首页");
 			param.put("divepage$Previous", "上一页");
 			param.put("divepage$Next", "下一页");
 			param.put("divepage$Lastly", "末页");
 			param.put("divepage$SelectPage", "");
 			param.put("divepage$Select", "确定");
-			/*param.put("__EVENTARGUMENT", "");
-			param.put("__LASTFOCUS", "");
-			param.put("__VIEWSTATEENCRYPTED", "");*/
 			param.put("Button1", "查询");
 			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
-			//JSONArray obj = htmlUtil.parseZhuanYe(outResultString);
+			/*JSONArray obj = htmlUtil.parseXueYuan(outResultString, "DropDownList6");
 			
-			//result.put("status", "ok");
-			//result.put("data", obj);
+			result.put("status", "ok");
+			result.put("data", obj);
+			return result.toString();*/
 			return outResultString;
 		}catch(Exception e){
 			e.printStackTrace();

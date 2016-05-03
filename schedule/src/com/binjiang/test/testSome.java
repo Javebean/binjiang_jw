@@ -167,12 +167,38 @@ public class testSome {
 	}
 	
 	
+	/**
+	 * 老师点击系部
+	 */
 	@Test
 	public void testclick_rollcall_document(){
 		Map<String,String> param = new HashMap<String, String>();
 		param.put("document_value", "滨江学院计算机系");
 		
 		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"click_rollcall_document.do", param);
+		System.out.println("点名册1："+httpGetFunc);
+	}
+	/**
+	 * 老师点击专业
+	 */
+	@Test
+	public void testclick_rollcall_profession(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("profession_value", "2344");
+		
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"click_rollcall_profession.do", param);
+		System.out.println("点名册1："+httpGetFunc);
+	}
+	
+	/**
+	 * 老师点击专业
+	 */
+	@Test
+	public void testclick_rollcall_grade(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("grade_value", "2012");
+		
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"click_rollcall_grade.do", param);
 		System.out.println("点名册1："+httpGetFunc);
 	}
 	

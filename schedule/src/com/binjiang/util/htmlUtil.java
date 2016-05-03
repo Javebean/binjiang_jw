@@ -371,10 +371,10 @@ public class htmlUtil {
 	 * @param html
 	 * @return
 	 */
-	public static JSONArray parseXueYuan(String html){
+	public static JSONArray parseXueYuan(String html,String droplistId){
 		JSONArray result = new JSONArray();
 		Document doc = Jsoup.parse(html);
-		Elements element = doc.getElementById("DropDownList4").select("option");
+		Elements element = doc.getElementById(droplistId).select("option");
 		JSONObject pro = null;
 		for(Element e : element){
 			pro =  new JSONObject();
@@ -383,22 +383,6 @@ public class htmlUtil {
 		}
 		return result;
 	}
-	/**
-	 * 解析-根据教师点名 -- 专业
-	 * @param html
-	 * @return
-	 */
-	public static JSONArray parseZhuanYe(String html){
-		JSONArray result = new JSONArray();
-		Document doc = Jsoup.parse(html);
-		Elements element = doc.getElementById("DropDownList5").select("option");
-		JSONObject pro = null;
-		for(Element e : element){
-			pro =  new JSONObject();
-			pro.put(e.val(), e.text());
-			result.put(pro);
-		}
-		return result;
-	}
+	
 	
 }
