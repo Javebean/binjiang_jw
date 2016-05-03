@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,6 +21,7 @@ public class CourseData {
 
 	private String outResultString = "";
 	private String bjxyuri ="";
+	Map<String, String> selectCourseMustParam = null;
 	
 	@RequestMapping(value="/loginbjxy.do",method=RequestMethod.POST,produces="text/html;charset=utf-8")
 	public String LoginBJXY(String username,String password,String role){
@@ -27,12 +30,13 @@ public class CourseData {
 		JSONObject obj = new JSONObject();
 		try {
 			bjxyuri = CallRemote.getRedirectUrl();
-		
 			//访问滨江教务登陆首页
 			Map<String, String> login_param = CallRemote.getLogin_param();
 			login_param.put("TextBox1", username);
 			login_param.put("TextBox2", password);
 			login_param.put("js", role);
+			
+			
 			CallRemote.httpGetFunc(bjxyuri, login_param);
 			bjxyuri = bjxyuri.substring(0, bjxyuri.lastIndexOf("/")+1);
 			//跳转到课表页面
@@ -182,13 +186,13 @@ public class CourseData {
 	 */
 	@RequestMapping(value="/online_evaluate_page.do",produces="text/html;charset=utf-8",method=RequestMethod.GET)
 	public String online_evaluate_page(int lev){
-		String evaStr = null;
 		JSONArray parserOnlineEvalute = null;
 		if(lev==0){
-			evaStr = CallRemote.httpGetFunc(bjxyuri+"student/wspj.aspx", null);
-			parserOnlineEvalute = htmlUtil.parserOnlineEvalute(evaStr);
+			outResultString = CallRemote.httpGetFunc(bjxyuri+"student/wspj.aspx", null);
+			parserOnlineEvalute = htmlUtil.parserOnlineEvalute(outResultString);
 		}else if(1==lev){
-			
+			outResultString = CallRemote.httpGetFunc(bjxyuri+"student/xszp.aspx", null);
+			parserOnlineEvalute = htmlUtil.parseStudentEvalute(outResultString);
 		}
 		
 		
@@ -204,15 +208,73 @@ public class CourseData {
 			obj.put("reason", "没有参数");
 			return  obj.toString();
 		}
-		String result = null;
 		JSONArray arr = null;
 		try{
-			result = CallRemote.httpGetFunc(bjxyuri+"student/"+param, null);
-			arr = htmlUtil.parseSingleOnlineEv(result);
+			outResultString = CallRemote.httpGetFunc(bjxyuri+"student/"+param, null);
+			arr = htmlUtil.parseSingleOnlineEv(outResultString);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		return arr.toString();
+	}
+	
+	@RequestMapping(value="/submit_online_evaluate.do",produces="text/html;charset=utf-8",method=RequestMethod.GET)
+	public String submit_online_evalueate(HttpServletRequest request,String submitUrl){
+		JSONObject result = new JSONObject();
+		Map<String, String[]> pmap = request.getParameterMap();
+		Map<String,String> param = new HashMap<String, String>();
+		for(Map.Entry<String, String[]> p:pmap.entrySet()){
+			if(!"submitUrl".equals(p.getKey())){
+				param.put(p.getKey(), p.getValue()[0]);
+			}
+		}
+		param.put("Button2", "提  交");
+		/*param.put("btnReturn", "返  回");*/
+		param.putAll(htmlUtil.getSelectCourseMustParam(outResultString));
+		try{
+			String result1 = CallRemote.httpPostFunc(bjxyuri+"student/"+submitUrl, param);
+			boolean evaState = htmlUtil.evaState(result1);
+			if(evaState){
+				result.put("status", "ok");
+			}else{
+				result.put("status", "fail");
+			}
+			return result.toString();
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+		}
+		
+		
+	}
+	
+	@RequestMapping(value="/submit_student_evaluate.do",produces="text/html;charset=utf-8",method=RequestMethod.GET)
+	public String studentEvalueate(HttpServletRequest request){
+		JSONObject result = new JSONObject();
+		Map<String, String[]> pmap = request.getParameterMap();
+		Map<String,String> param = new HashMap<String, String>();
+		for(Map.Entry<String, String[]> p:pmap.entrySet()){
+			param.put(p.getKey(), p.getValue()[0]);
+		}
+		param.putAll(htmlUtil.getSelectCourseMustParam(outResultString));
+		param.put("btnSave", "保存");
+		 
+		try{
+			String result1 = CallRemote.httpPostFunc(bjxyuri+"student/xszp.aspx", param);
+			boolean evaState = htmlUtil.evaState_stu(result1);
+			if(evaState){
+				result.put("status", "ok");
+			}else{
+				result.put("status", "fail");
+			}
+			return result.toString();
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		
+		
 	}
 	
 	
@@ -237,5 +299,84 @@ public class CourseData {
 		return result.toString();
 		
 	}
+	
+	
+	/**
+	 * 查询老师或者学生单独的上课课表
+	 * @param type 0:laoshi
+	 * @return
+	 */
+	@RequestMapping(value="tea_stu_self_course.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String tea_stu_self_course(int type){
+		JSONObject result = new JSONObject();
+		JSONArray parseClassCourse = null;
+		try{
+			if(type==0){
+				outResultString = CallRemote.httpGetFunc(bjxyuri+"public/jskebiaoall.aspx", null);
+			}else{
+				outResultString = CallRemote.httpGetFunc(bjxyuri+"public/jskebiaoall.aspx", null);
+			}
+			parseClassCourse = htmlUtil.parseClassCourse(outResultString);
+			result.put("status", "ok");
+			result.put("data", parseClassCourse);
+			return result.toString();
+		}catch(Exception e){
+			result.put("status", "fail");
+			return result.toString();
+		}
+	}
+	
+	
+	/**
+	 * 点击 查看班级学生名册
+	 * @return
+	 */
+	@RequestMapping(value="tea_rollcall.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String tea_rollcall(){
+		JSONObject result = new JSONObject();
+		try{
+			outResultString = CallRemote.httpGetFunc(bjxyuri+"public/xsmddy.aspx", null);
+			result.put("status", "ok");
+			result.put("data", htmlUtil.parseXueYuan(outResultString));
+			return result.toString();
+			
+		}catch(Exception e){
+			result.put("status", "fail");
+			return result.toString();
+		}
+		
+	}
+	
+	@RequestMapping(value="click_rollcall_document.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String click_rollcall_document(String document_value){
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String> param = htmlUtil.getSelectCourseMustParam(outResultString);
+			param.put("__EVENTTARGET", "DropDownList4");
+			param.put("DropDownList4", document_value);
+			param.put("divepage$First","首页");
+			param.put("divepage$Previous", "上一页");
+			param.put("divepage$Next", "下一页");
+			param.put("divepage$Lastly", "末页");
+			param.put("divepage$SelectPage", "");
+			param.put("divepage$Select", "确定");
+			/*param.put("__EVENTARGUMENT", "");
+			param.put("__LASTFOCUS", "");
+			param.put("__VIEWSTATEENCRYPTED", "");*/
+			param.put("Button1", "查询");
+			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
+			//JSONArray obj = htmlUtil.parseZhuanYe(outResultString);
+			
+			//result.put("status", "ok");
+			//result.put("data", obj);
+			return outResultString;
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+			
+		}
+	}
+	
 	
 }

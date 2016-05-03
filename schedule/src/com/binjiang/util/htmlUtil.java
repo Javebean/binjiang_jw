@@ -1,6 +1,5 @@
 package com.binjiang.util;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -252,7 +251,7 @@ public class htmlUtil {
 	
 	
 	/**
-	 * 解析个人的评价表面
+	 * 解析网上评教对老师个人的评价表面
 	 * @return
 	 */
 	public static JSONArray parseSingleOnlineEv(String html){
@@ -280,7 +279,6 @@ public class htmlUtil {
 					}
 					index++;
 				}
-				System.out.println(Arrays.toString(th));
 			}else{
 				ths = trs.get(i).select("td");
 				int index = 0;
@@ -300,6 +298,107 @@ public class htmlUtil {
 		
 		return arr;
 		
+	}
+	
+	/**
+	 * 网上评教----判断页面是否有“评教成功”。有就是评价成功，没有就是失败
+	 * @return
+	 */
+	public static boolean evaState(String html){
+		return html.contains("评教成功");
+	}
+	
+	/**
+	 * 学生自评-----判断页面是否有“保存成功”。有就是保存成功，没有就是失败
+	 * @return
+	 */
+	public static boolean evaState_stu(String html){
+		return html.contains("保存成功");
+	}
+	
+	
+	/**
+	 * @param html
+	 * @return
+	 */
+	public static JSONArray parseStudentEvalute(String html){
+		JSONArray arr = new JSONArray();
+		Document doc = Jsoup.parse(html);
+		Element table = doc.getElementById("GcGridView1");
+		Elements trs = table.select("tr");
+		int tr_num = trs.size();
+		String[] th = new String[trs.get(0).select("th").size()];
+		Elements ths = null;
+		JSONObject obj = null;
+		
+		for(int i=0;i<tr_num;i++){
+			if(i==0){//把第一个tr中的th存到数组里
+				ths = trs.get(i).select("th");
+				int index = 0;
+				for(Element t : ths){
+					th[index++] = t.text();
+				}
+			}else{
+				ths = trs.get(i).select("td");
+				int index = 0;
+				obj = new JSONObject();
+				for(Element t : ths){
+					if(index==5){
+						JSONObject score = new JSONObject();
+						score.put("name", t.select("select").attr("name"));
+						Elements op = t.select("select").select("option");
+						for(Element o :op){
+							score.put(o.text(), o.val());
+						}
+						obj.put(th[index++], score);
+							
+					}else{
+						obj.put(th[index++], t.text());
+					}
+					
+				}
+				arr.put(obj);
+			}
+			
+		}
+		
+		return arr;
+	}
+	
+	
+	/**
+	 * 解析-根据教师点名 -- 学院
+	 * @param html
+	 * @return
+	 */
+	public static JSONArray parseXueYuan(String html){
+		JSONArray result = new JSONArray();
+		Document doc = Jsoup.parse(html);
+		Elements element = doc.getElementById("DropDownList4").select("option");
+		JSONObject pro = null;
+		for(Element e : element){
+			pro =  new JSONObject();
+			pro.put(e.val(), e.text());
+			result.put(pro);
+		}
+		return result;
+	}
+	/**
+	 * 解析-根据教师点名 -- 专业
+	 * @param html
+	 * @return
+	 */
+	public static JSONArray parseZhuanYe(String html){
+		JSONArray result = new JSONArray();
+		Document doc = Jsoup.parse(html);
+		Elements element = doc.getElementById("DropDownList5").select("option");
+		JSONObject pro = null;
+		for(Element e : element){
+			pro =  new JSONObject();
+			pro.put(e.val(), e.text());
+			result.put(pro);
+		}
+		return result;
 	}
 	
 }
