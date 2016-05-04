@@ -213,6 +213,13 @@ public class htmlUtil {
 		return arr;
 	}
 	
+	
+	/**
+	 * 解析表格
+	 * @param html
+	 * @param tableId
+	 * @return
+	 */
 	public static JSONArray parseonline1(String html,String tableId){
 		JSONArray arr = new JSONArray();
 		Document doc = Jsoup.parse(html);

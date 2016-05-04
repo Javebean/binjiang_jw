@@ -20,14 +20,14 @@ public class testSome {
 		Map<String,String> param = new HashMap<String, String>();
 		/*param.put("username", "20122344003");
 		param.put("password", "888888");*/
-		/*param.put("username", "20132308020");
-		param.put("password", "001221");*/
-		param.put("username", "000519");
-		param.put("password", "050125");
+		param.put("username", "20132308020");
+		param.put("password", "001221");
+		/*param.put("username", "000519");
+		param.put("password", "050125");*/
 		/*param.put("username", "20122344004");
 		param.put("password", "ch2oh2o");*/
 		 		
-		param.put("role", "RadioButton1");//老师：RadioButton1 学生：RadioButton3
+		param.put("role", "RadioButton3");//老师：RadioButton1 学生：RadioButton3
 		 String httpPostFunc = CallRemote.httpPostFunc(baseUrl+"loginbjxy.do", param);
 		 System.out.println("登陆成功："+httpPostFunc);
 		 
@@ -92,17 +92,17 @@ public class testSome {
 	}
 	
 	
-	/*@Test
+	@Test
 	public void test8Online_eva(){
 		Map<String,String> param = new HashMap<String, String>();
-		//param.put("param","wspjdf.aspx?xkkh=(2015-2016-2)-1000018-002200-1&jszgh=002200&pjmc=期中");
-		param.put("param","wspjdf.aspx?xkkh=(2015-2016-2)-1004435-207810-2&jszgh=207810&pjmc=期中");
+		param.put("param","wspjdf.aspx?xkkh=(2015-2016-2)-1000018-002200-1&jszgh=002200&pjmc=期中");
+		/*param.put("param","wspjdf.aspx?xkkh=(2015-2016-2)-1004435-207810-2&jszgh=207810&pjmc=期中");*/
 		
 		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"online_evaluate.do", param);
 		System.out.println("网上评教33"+httpGetFunc);
 		
 	}
-	*/
+	
 	@Test
 	public void test8submit_student_eva(){
 		Map<String,String> param = new HashMap<String, String>();
@@ -197,10 +197,11 @@ public class testSome {
 	public void testclick_rollcall_grade(){
 		Map<String,String> param = new HashMap<String, String>();
 		param.put("grade_value", "2012");
-		
 		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"click_rollcall_grade.do", param);
 		System.out.println("点名册1："+httpGetFunc);
 	}
+	
+	
 	
 	
 	

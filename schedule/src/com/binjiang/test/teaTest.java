@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import com.binjiang.http.CallRemote;
-import com.binjiang.util.htmlUtil;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class teaTest {
 
@@ -98,22 +97,50 @@ public class teaTest {
 		System.out.println("点名册1："+httpGetFunc);
 	}
 	
+	
+	/**
+	 * 查询班级点名册
+	 */
 	@Test
-	public void test7click_rollcall_grade(){
+	public void test8class_rollcall_names(){
 		Map<String,String> param = new HashMap<String, String>();
 		param.put("DropDownList4", "滨江学院计算机系");
 		param.put("DropDownList5", "2344");
 		param.put("DropDownList3", "2012");
-		param.put("DropDownList6", "12软件1");
-		
+		param.put("DropDownList6", "12软件2");
 		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"class_rollcall_names.do", param);
-		System.out.println("点名册1："+httpGetFunc);
+		System.out.println("点名册@："+httpGetFunc);
 	}
 	
-	
+	/**
+	 * 查询班级点名册---下一页
+	 */
+	@Test
+	public void test8next_class_rollcall_names(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("DropDownList4", "滨江学院计算机系");
+		param.put("DropDownList5", "2344");
+		param.put("DropDownList3", "2012");
+		param.put("DropDownList6", "12软件2");
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"next_class_rollcall_names.do", param);
+		System.out.println("下一页："+httpGetFunc);
+	}
+	/**
+	 * 查询班级点名册---下一页
+	 */
+	@Test
+	public void test9previous_class_rollcall_names(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("DropDownList4", "滨江学院计算机系");
+		param.put("DropDownList5", "2344");
+		param.put("DropDownList3", "2012");
+		param.put("DropDownList6", "12软件2");
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"previous_class_rollcall_names.do", param);
+		System.out.println("上一页："+httpGetFunc);
+	}
 	
 	@Test
-	public void test90QuitSystem(){
+	public void testz0QuitSystem(){
 		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"quit_system.do", null);
 		System.out.println(httpGetFunc);
 	}

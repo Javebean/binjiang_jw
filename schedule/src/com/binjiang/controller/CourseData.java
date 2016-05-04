@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.HttpRequest;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -315,7 +314,7 @@ public class CourseData {
 			if(type==0){
 				outResultString = CallRemote.httpGetFunc(bjxyuri+"public/jskebiaoall.aspx", null);
 			}else{
-				outResultString = CallRemote.httpGetFunc(bjxyuri+"public/jskebiaoall.aspx", null);
+				outResultString = CallRemote.httpGetFunc(bjxyuri+"student/mykebiaoall1.aspx", null);
 			}
 			parseClassCourse = htmlUtil.parseClassCourse(outResultString);
 			result.put("status", "ok");
@@ -438,7 +437,7 @@ public class CourseData {
 	 * @return
 	 */
 	@RequestMapping(value="class_rollcall_names.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
-	public String click_rollcall_class(HttpServletRequest request){
+	public String class_rollcall_names(HttpServletRequest request){
 		JSONObject result = new JSONObject();
 		try{
 			Map<String, String[]> pmap = request.getParameterMap();
@@ -446,25 +445,88 @@ public class CourseData {
 			for(Map.Entry<String, String[]> p:pmap.entrySet()){
 				param.put(p.getKey(), p.getValue()[0]);
 			}
-			
-			
+			param.putAll(htmlUtil.getSelectCourseMustParam(outResultString));
 			param.put("__EVENTARGUMENT", "");
 			param.put("__LASTFOCUS", "");
 			param.put("__VIEWSTATEENCRYPTED", "");
-			param.put("divepage$First", "首页");
+			/*param.put("divepage$First", "首页");
 			param.put("divepage$Previous", "上一页");
 			param.put("divepage$Next", "下一页");
 			param.put("divepage$Lastly", "末页");
 			param.put("divepage$SelectPage", "");
-			param.put("divepage$Select", "确定");
+			param.put("divepage$Select", "确定");*/
 			param.put("Button1", "查询");
 			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
-			/*JSONArray obj = htmlUtil.parseXueYuan(outResultString, "DropDownList6");
-			
 			result.put("status", "ok");
-			result.put("data", obj);
-			return result.toString();*/
-			return outResultString;
+			result.put("data", htmlUtil.parseonline1(outResultString, "GridView1"));
+			return result.toString();
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+			
+		}
+	}
+	
+	/**
+	 * 点击 查看班级学生名册 ----下一页
+	 * @return
+	 */
+	@RequestMapping(value="next_class_rollcall_names.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String next_class_rollcall_names(HttpServletRequest request){
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String[]> pmap = request.getParameterMap();
+			Map<String,String> param = new HashMap<String, String>();
+			for(Map.Entry<String, String[]> p:pmap.entrySet()){
+				param.put(p.getKey(), p.getValue()[0]);
+			}
+			param.putAll(htmlUtil.getSelectCourseMustParam(outResultString));
+			param.put("__EVENTARGUMENT", "");
+			param.put("__LASTFOCUS", "");
+			param.put("__VIEWSTATEENCRYPTED", "");
+			param.put("divepage$Next", "下一页");
+			/*param.put("divepage$First", "首页");
+			param.put("divepage$Previous", "上一页");
+			param.put("divepage$Lastly", "末页");
+			param.put("divepage$SelectPage", "");
+			param.put("divepage$Select", "确定");*/
+			/*param.put("Button1", "查询");*/
+			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
+			result.put("status", "ok");
+			result.put("data", htmlUtil.parseonline1(outResultString, "GridView1"));
+			return result.toString();
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+			
+		}
+	}
+	@RequestMapping(value="previous_class_rollcall_names.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String previous_class_rollcall_names(HttpServletRequest request){
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String[]> pmap = request.getParameterMap();
+			Map<String,String> param = new HashMap<String, String>();
+			for(Map.Entry<String, String[]> p:pmap.entrySet()){
+				param.put(p.getKey(), p.getValue()[0]);
+			}
+			param.putAll(htmlUtil.getSelectCourseMustParam(outResultString));
+			param.put("__EVENTARGUMENT", "");
+			param.put("__LASTFOCUS", "");
+			param.put("__VIEWSTATEENCRYPTED", "");
+			param.put("divepage$Previous", "上一页");
+			/*param.put("divepage$First", "首页");
+			param.put("divepage$Next", "下一页");
+			param.put("divepage$Lastly", "末页");
+			param.put("divepage$SelectPage", "");
+			param.put("divepage$Select", "确定");*/
+			/*param.put("Button1", "查询");*/
+			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/xsmddy.aspx", param);
+			result.put("status", "ok");
+			result.put("data", htmlUtil.parseonline1(outResultString, "GridView1"));
+			return result.toString();
 		}catch(Exception e){
 			e.printStackTrace();
 			result.put("status", "fail");
