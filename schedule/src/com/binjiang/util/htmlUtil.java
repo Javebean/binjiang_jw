@@ -385,7 +385,7 @@ public class htmlUtil {
 		JSONObject pro = null;
 		for(Element e : element){
 			pro =  new JSONObject();
-			pro.put(e.val(), e.text());
+			pro.put(e.text(), e.val());
 			result.put(pro);
 		}
 		return result;
