@@ -2,6 +2,7 @@ package com.binjiang.test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -211,5 +212,5 @@ public class testSome {
 		System.out.println(httpGetFunc);
 	}
 	
-
+	
 }

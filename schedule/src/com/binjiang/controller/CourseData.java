@@ -535,5 +535,62 @@ public class CourseData {
 		}
 	}
 	
+	/**
+	 * g根据课程查询学生名单
+	 * @return
+	 */
+	@RequestMapping(value="query_stu_bycourse.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String queryStudentsByCourse(){
+		JSONObject result = new JSONObject();
+		try{
+			outResultString = CallRemote.httpGetFunc(bjxyuri+"public/jsjxrwcx.aspx", null);
+			result.put("status", "ok");
+			result.put("data", htmlUtil.parseStudentByCourse(outResultString, "GcGridView1"));
+			return result.toString();
+			
+		}catch(Exception e){
+			result.put("status", "fail");
+			return result.toString();
+		}
+	}
+	
+	/**
+	 * 点击课程 中的每个名单浏览
+	 * @return
+	 */
+	@RequestMapping(value="click_brower_stunames.do",method=RequestMethod.GET,produces="text/html;charset=utf-8")
+	public String clickBrowerStuNames(String param){
+		JSONObject result = new JSONObject();
+		try{
+			Map<String, String> mustparam = htmlUtil.getSelectCourseMustParam(outResultString);
+			mustparam.put("__EVENTTARGET", param);
+			mustparam.put("__EVENTARGUMENT", "");
+			mustparam.put("__LASTFOCUS", "");
+			mustparam.put("DropDownList4",htmlUtil.findValueById(outResultString, "DropDownList3"));
+			mustparam.put("DropDownList4",htmlUtil.findValueById(outResultString, "DropDownList4"));
+			mustparam.put("DropDownList1", htmlUtil.findValueById(outResultString, "DropDownList1"));
+			mustparam.put("DropDownList2", htmlUtil.findValueById(outResultString, "DropDownList2"));
+			
+			outResultString = CallRemote.httpPostFunc(bjxyuri+"public/jsjxrwcx.aspx", mustparam);
+			if(outResultString.contains("xkkh%3d")){
+				int index = outResultString.indexOf("xkkh%3d");
+				int index2 = outResultString.indexOf("\">here");
+				String p = outResultString.substring(index+7,index2);
+				outResultString = CallRemote.httpGetFunc(bjxyuri+"public/xsxkmdcx.aspx?xkkh="+p, null);
+				result.put("status", "ok");
+				result.put("data", htmlUtil.parseOrdinaryLevScore(outResultString));
+				return result.toString();
+			}else{
+				result.put("status", "fail");
+				return result.toString();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			result.put("status", "fail");
+			return result.toString();
+			
+		}
+	}
+	
 	
 }

@@ -1,5 +1,6 @@
 package com.binjiang.test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +36,30 @@ public class teaTest {
 	}
 	
 	 
+	/**
+	 * 根据课程查询学生名单
+	 * @param type 0:laoshi
+	 * @return
+	 */
+	@Test
+	public void testqueryStudentsByCourse(){
+		
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"query_stu_bycourse.do", null);
+		System.out.println("名单："+httpGetFunc);
+	}
+	/**
+	 * 点击浏览。浏览学生名单
+	 * @param type 0:laoshi
+	 * @return
+	 */
+	@Test
+	public void testclick_brower_stunames(){
+		Map<String,String> param = new HashMap<String, String>();
+		param.put("param", "GcGridView1$ctl02$LinkButton1");
+		String httpGetFunc = CallRemote.httpGetFunc(baseUrl+"click_brower_stunames.do", param);
+		System.out.println("名单："+httpGetFunc);
+	}
+	
 	
 	/**
 	 * 查询老师或者学生单独的上课课表
@@ -145,5 +170,18 @@ public class teaTest {
 		System.out.println(httpGetFunc);
 	}
 	
+	
+	@Test
+	public void test3333(){
+		Map<String, String[]> p = new HashMap<String, String[]>();
+		String []s1 = new String[]{"1z","2x"};
+		p.put("aaa", s1);
+		
+		Object[] key_arr = p.values().toArray();
+		for(Object o: key_arr){
+			System.out.println(Arrays.toString((String[]) o));
+		}
+		
+	}
 
 }

@@ -1,5 +1,6 @@
 package com.binjiang.util;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -255,6 +256,58 @@ public class htmlUtil {
 		
 		return arr;
 	}
+	/**
+	 * 解析表格
+	 * @param html
+	 * @param tableId
+	 * @return
+	 */
+	public static JSONArray parseStudentByCourse(String html,String tableId){
+		JSONArray arr = new JSONArray();
+		Document doc = Jsoup.parse(html);
+		Element table = doc.getElementById(tableId);
+		Elements trs = table.select("tr");
+		int tr_num = trs.size();
+		String[] th = new String[trs.get(0).select("th").size()];
+		Elements ths = null;
+		JSONObject obj = null;
+		
+		for(int i=0;i<tr_num;i++){
+			if(i==0){//把第一个tr中的th存到数组里
+				ths = trs.get(i).select("th");
+				int index = 0;
+				for(Element t : ths){
+					th[index++] = t.text();
+				}
+			}else{
+				ths = trs.get(i).select("td");
+				int index = 0;
+				obj = new JSONObject();
+				for(Element t : ths){
+					if(index==17){
+						String url = t.select("a").attr("href");
+						obj.put(th[index++],getFirstParam(url));
+					}else{
+						obj.put(th[index++], t.text());
+					}
+				}
+				arr.put(obj);
+			}
+			
+		}
+		
+		return arr;
+	}
+	
+	
+	
+	private static String getFirstParam(String str){
+		int index = str.indexOf("'");
+		str = str.substring(index+1);
+		int index2 = str.indexOf("'");
+		str = str.substring(0, index2);
+		return str;
+	}
 	
 	
 	/**
@@ -391,5 +444,15 @@ public class htmlUtil {
 		return result;
 	}
 	
-	
+	public static String findValueById(String html,String id){
+		Document parse = Jsoup.parse(html);
+		Elements element = parse.getElementById(id).select("option");
+		for(Element e : element){
+			if(e.hasAttr("selected")){
+				return e.val();
+			}
+		}
+		return "";
+		
+	}
 }
