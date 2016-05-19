@@ -281,6 +281,11 @@ public class htmlUtil {
 				}
 			}else{
 				ths = trs.get(i).select("td");
+				Element element = ths.get(0);
+				if(element.text().contains("页次")){
+					continue;
+				}
+				
 				int index = 0;
 				obj = new JSONObject();
 				for(Element t : ths){
